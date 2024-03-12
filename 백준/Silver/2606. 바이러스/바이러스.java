@@ -1,70 +1,83 @@
+//package baek_joon.class_3.바이러스;
 
-
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Scanner;
-
-// 인접 행렬
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
- * @Point count가 Null일 수도 있음
- * 감염되는 대상이 없을 수 있음
+ * BFS
  */
 public class Main {
-
-    static boolean[] visited;
-    static int[][] matrix;
+    static int n;
+    static int[][] graph;
+    static boolean[] visit;
     static int count;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        Scanner sc = new Scanner(System.in);
-        //노드 수 (컴퓨터)
-        int n = sc.nextInt();
-        //엣지 수
-        int edge = sc.nextInt();
+        // 노드 수
+        n = Integer.parseInt(br.readLine());
+        // 엣지 수
+        int edge = Integer.parseInt(br.readLine());
 
-        // 방향성 그래프 인접 행렬 할당
-        matrix = new int[n + 1][n + 1];
+        // 인접 행렬 할당 그래프
+        graph = new int[n + 1][n + 1];
+
         for (int i = 1; i <= edge; i++) {
-            int v1, v2;
-            v1 = sc.nextInt();
-            v2 = sc.nextInt();
-            matrix[v1][v2] = 1;
-            matrix[v2][v1] = 1;
-            //         System.out.println(v1 + " > " + v2);
+            // 공백으로 나눠 입력
+            String[] info = br.readLine().split(" ");
+            int from = Integer.parseInt(info[0]);
+            int to = Integer.parseInt(info[1]);
+            graph[from][to] = 1;
+            graph[to][from] = 1;
+//            System.out.println("그래프: " + graph[from][to]);
         }
 
-        /**
-         * @Point: 1과 연결되어 있는가 , 1과 연결된 노드들과 연결된 또 다른 노드들 개수 카운트
-         * 1을 시작노드로 dfs >> 연결된 모든 노드(컴퓨터)들을 끝까지 탐색해야 하므로
-         * DFS 인접 행렬 재귀로 구현
-         **/
-        visited = new boolean[n + 1];
+        //방문 배열
+        visit = new boolean[n + 1];
 
-        // 시작 노드
+        //시작노드
         int start = 1;
-        if (dfs(start) == 0) {
-            System.out.println("0");
+        if (bfs(start) == 0) {
+            System.out.print("0");
         } else {
-            System.out.print(dfs(start));
+            System.out.print(bfs(start));
         }
-
     }
 
-    // DFS 인접행렬 재귀 구현
-    private static int dfs(int Node) {
-        //      System.out.println(Node + " > 노드");
-        // 방문 체크
-        visited[Node] = true;
-        for (int i = 1; i < matrix.length; i++) {
-            if (matrix[Node][i] == 1 && !visited[i]) {
-                //           System.out.println("I번째: " + i);
-                //         System.out.println("인접 행렬 위치 : " + matrix[Node][i] + "/ 방문여부: " + visited[i]);
-                count++;
-                dfs(i);
+    //BFS 큐 구현
+    private static int bfs(int Node) {
+        Queue<Integer> q = new LinkedList<>();
+        //큐에 시작노드 삽입
+        q.add(Node);
+        //노드 방문 체크
+        visit[Node] = true;
+
+        while (!q.isEmpty()) {
+            int nowNode = q.poll();
+//            System.out.println("NowNode: " + nowNode);
+
+            // 어디까지 반복
+            for (int i = 0; i < graph.length; i++) {
+//                System.out.println("I: " + i);
+
+                //인접 행렬에서 노드와 연결되어있고
+                if (graph[nowNode][i] == 1) {
+                    //방문하지 않았다면
+                    if (!visit[i]) {
+//                        System.out.println("연결노드 " + i);
+                        //방문 체크하고
+                        visit[i] = true;
+                        //큐에 삽입
+                        q.add(i);
+                        count++;
+                    }
+                }
             }
         }
-
         if (count == 0) {
             return 0;
         }
