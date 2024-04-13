@@ -1,16 +1,18 @@
-def selectionSort(li):
-    for i in range(0, len(li)):
-        min_idx = i
-        for j in range(i + 1, len(li)):
-            if li[j] > li[min_idx]:
-                min_idx = j
-        li[i], li[min_idx] = li[min_idx], li[i]
+def insertion_sort(li):
+    n = len(li)  # Get the length of the list
+    if n <= 1:
+        return
+    for i in range(1, n):
+        key = li[i]
+        j = i - 1
+        while j >= 0 and key > li[j]:
+            li[j + 1] = li[j]
+            j -= 1
+        li[j + 1] = key
 
 
 li = list(map(int, input()))
-selectionSort(li)
-
-# print a list without brackets
+insertion_sort(li)
 
 for i in li:
     print(i, end='')
